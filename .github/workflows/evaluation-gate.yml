@@ -1,0 +1,23 @@
+name: Evaluation gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[dev]'
+      - run: ruff check src tests
+      - run: pytest --cov=eval_harness --cov-report=term-missing
+      - run: sentinel-eval run datasets/product_support.jsonl --mutations --min-pass-rate 0.80
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evaluation-report
+          path: artifacts/latest-run.json
+
