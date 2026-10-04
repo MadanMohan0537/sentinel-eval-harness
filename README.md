@@ -24,6 +24,14 @@ sentinel-eval run datasets/product_support.jsonl --mutations --min-pass-rate 0.8
 }
 ```
 
+## Start with a reproducible baseline
+
+Run the bundled dataset against the mock adapter first, then replace the adapter with a real endpoint. Keep dataset and policy versions constant when comparing baseline and candidate runs.
+
+Read the adapter contract before integration: a transport failure must not silently become a passing answer. Inspect case-level scores and critical failures as well as the aggregate gate. Passing means that the configured suite met its policy; it is not proof of general model safety or correctness.
+
+For implementation review, start with [CLI commands](src/eval_harness/cli.py), [datasets](datasets/) and [tests](tests/). Store reports with the model, prompt, retrieval configuration and endpoint version used for the run.
+
 ## The product in one minute
 
 | Stage | What Sentinel does | Why it matters |
